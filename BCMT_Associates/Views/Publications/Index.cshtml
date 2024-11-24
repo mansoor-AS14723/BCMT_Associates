@@ -1,0 +1,152 @@
+﻿@model IEnumerable<BCMT_Associates.Models.Publication>
+
+<h2>Publications</h2>
+
+<!-- Publications List -->
+<div class="row" id="publicationsList">
+    @foreach (var publication in Model)
+    {
+        <div class="col-md-4 mb-4" id="publication-@publication.Id">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title title ">@publication.Title</h5>
+                    <p class="card-text Name">
+                      @publication.JournalName<br />
+                    </p>
+
+                    <p class="card-text Date">
+                       @publication.DatePublished.ToShortDateString()
+                    </p>
+                    <p class="card-text ISSN">
+                     @publication.ISSN
+                    </p>
+                    <!--Edit button (opens modal to show product Edit modal) -->
+                    <button class="btn btn-outline-success mt-2  btn-warning text-white" data-bs-toggle="modal" data-bs-target="#EditModal" data-id="@publication.Id">
+                        Edit
+                    </button>
+                    <!--Delete button (opens modal to show product Delete Modal) -->
+                    <button class="btn btn-outline-success mt-2 btn-danger text-white" data-bs-toggle="modal" data-bs-target="#DeleteModal" data-id="@publication.Id">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!--Create button (opens modal to show product Create Modals) -->
+<button class="btn btn-outline-warning mt-2 btn-success text-white" data-bs-toggle="modal" data-bs-target="#CreateModal">
+    Add New Publication
+</button>
+
+
+
+<!-- Edit Modal -->
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="EditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditModalLabel">Edit Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="editModalBody">
+                <!-- Edit form will be loaded here via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="DeleteModal" tabindex="-1" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeleteModalLabel">Delete Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="deleteModalBody">
+                <!-- Delete confirmation will be loaded here via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Modal -->
+<div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="CreateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CreateModalLabel">Add New Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="createModalBody">
+                <!-- Create form will be loaded here via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+//**************************************************Create Get************************************************************* */
+        $(document).ready(function () {
+            // Load Add Publication Partial View
+            // $('[data-bs-target="#CreateModal"]').click(function () {
+                $(document).on('click', '[data-bs-target="#CreateModal"]', function () {
+
+                $.ajax({
+                    url: '/Publications/Add',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#createModalBody').html(data);
+                    },
+                    error: function () {
+                        alert("Failed to load the add publication view.");
+                    }
+                });
+            });
+
+            //**************************************************Create Edit************************************************************* */
+
+
+            // Load Edit Publication Partial View
+                // $('[data-bs-target="#EditModal"]').click(function () {
+                $(document).on('click', '[data-bs-target="#EditModal"]', function () {
+
+               
+
+                var publicationId = $(this).data('id');
+                $.ajax({
+                    url: '/Publications/Edit/' + publicationId,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#editModalBody').html(data);
+                    },
+                    error: function () {
+                        alert("Failed to load the edit publication view.");
+                    }
+                });
+            });
+            //**************************************************Create Delete************************************************************* */
+
+            // Load Delete Publication Partial View
+                // $('[data-bs-target="#DeleteModal"]').click(function () {
+                $(document).on('click', '[data-bs-target="#DeleteModal"]', function () {
+
+
+                var publicationId = $(this).data('id');
+                $.ajax({
+                    url: '/Publications/Delete/' + publicationId,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#deleteModalBody').html(data);
+                    },
+                    error: function () {
+                        alert("Failed to load the delete publication view.");
+                    }
+                });
+            });
+        });
+    </script>
+}

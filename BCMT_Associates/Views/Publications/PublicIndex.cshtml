@@ -1,0 +1,25 @@
+﻿@model IEnumerable<BCMT_Associates.Models.Publication>
+
+<div id="courseId" class="row">
+    @foreach (var publication in Model)
+    {
+        <div class="col-md-4 mb-4  ">
+            <div class="card shadow-sm h-100" id="course-@publication.Id">
+
+                <div class="card-body">
+                    <h5 class="card-title title ">@publication.Title</h5>
+                    <p class="card-text Name">
+                        @publication.JournalName<br />
+                    </p>
+
+                    <p class="card-text Date">
+                        @publication.DatePublished.ToShortDateString()
+                    </p>
+                    <p class="card-text ISSN">
+                        @publication.ISSN
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

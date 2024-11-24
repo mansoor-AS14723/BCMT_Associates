@@ -1,0 +1,144 @@
+﻿@model IEnumerable<BCMT_Associates.Models.Course>
+
+<div class="container">
+    <h2>Course Management</h2>
+
+
+    <div id="courseId" class="row">
+        @foreach (var course in Model)
+        {
+            <div class="col-md-4 mb-4" id="course-@course.Id"  >
+                <div class="card">
+                    <img src="@(course.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(course.ImageData)}" : "/path/to/default-image.jpg")" class="card-img-top" alt="@course.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@course.Name</h5>
+                        <p class="card-text">@course.Description</p>
+                        <!--Edit button (opens modal to show product Edit modal) -->
+                        <button class="btn btn-outline-success mt-2  btn-warning text-white" data-bs-toggle="modal" data-bs-target="#EditModal" data-id="@course.Id">
+                            Edit
+                        </button>
+                        <!--Delete button (opens modal to show product Delete Modal) -->
+                        <button class="btn btn-outline-success mt-2 btn-danger text-white" data-bs-toggle="modal" data-bs-target="#DeleteModal" data-id="@course.Id">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <button class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#CreateModal" id="addCourseButton">Add Course</button>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="EditModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="EditModalLabel">Edit Course</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="editModalBody">
+                    <!-- Edit form will be loaded here via AJAX -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="DeleteModal" tabindex="-1" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="DeleteModalLabel">Delete Course</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="deleteModalBody">
+                    <!-- Delete confirmation will be loaded here via AJAX -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Modal -->
+    <div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="CreateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="CreateModalLabel">Add NeW Course</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="createModalBody">
+                    <!-- Create form will be loaded here via AJAX -->
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+@section Scripts {
+<script>
+        $(document).ready(function () {
+
+            // **************************** Load Create Form in "Create" Modal ****************************
+            $('[data-bs-target="#CreateModal"]').click(function () {
+                $.ajax({
+                    url: '/Courses/Add', // Endpoint for retrieving create form
+                    type: 'GET',
+                    success: function (result) {
+                        $('#createModalBody').html(result); // Load the create form into the modal's body
+                    },
+                    error: function () {
+                        alert('Error loading create form.'); // Show an error message on failure
+                    }
+                });
+            });
+
+
+        
+
+            // **************************** Load Delete Confirmation in "Delete" Modal ****************************
+            $(document).on('click', '[data-bs-target="#DeleteModal"]', function () {
+                var courseId = $(this).data('id'); // Get the product ID from the button's data-id attribute
+                    $('#DeleteModal').data('product-id', courseId); // Store product ID in modal's data attribute product-id
+
+                $.ajax({
+                    url: '/Courses/Delete/' + courseId, // Endpoint for retrieving delete confirmation
+                    type: 'GET',
+                    success: function (result) {
+                        $('#deleteModalBody').html(result); // Display the delete confirmation in the modal body
+                    },
+                    error: function () {
+                        alert('Error loading delete confirmation.'); // Show an error message on failure
+                    }
+                });
+            });
+
+            // **************************** Load Edit Form in "Edit" Modal ****************************
+            $(document).on('click', '[data-bs-target="#EditModal"]', function () {
+                    var courseId = $(this).data('id'); // Get the product ID from the clicked button's data-id attribute
+                    $('#EditModal').data('product-id', courseId); // Store product ID in modal's data attribute product-id,use for postt requst
+
+                $.ajax({
+                    url: '/Courses/Edit/' + courseId, // Endpoint for retrieving edit form
+                    type: 'GET',
+                    success: function (result) {
+                        $('#editModalBody').html(result); // Load the edit form into the modal's body
+                    },
+                    error: function () {
+                        alert('Error loading edit form.'); // Show an error message on failure
+                    }
+                });
+            });
+        });
+
+
+
+
+
+
+
+
+
+</script>
+}

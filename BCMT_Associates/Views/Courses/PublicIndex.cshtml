@@ -1,0 +1,20 @@
+﻿@model IEnumerable<BCMT_Associates.Models.Course>
+
+<div id="courseId" class="row">
+    @foreach (var course in Model)
+    {
+        <div class="col-md-4 mb-4  ">
+            <div class="card shadow-sm h-100" id="course-@course.Id">
+                <div class="card-img-top text-center p-3">
+                    <img src="data:image/png;base64,@Convert.ToBase64String(course.ImageData)" alt="Course Image" class="img-fluid rounded" style="max-height: 200px; object-fit: cover;" />
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title text-primary">@course.Name</h5>
+                    <p class="card-text">
+                        <strong>Description:</strong> <span>@course.Description</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

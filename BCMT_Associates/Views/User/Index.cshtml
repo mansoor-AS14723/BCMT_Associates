@@ -1,0 +1,426 @@
+﻿@{
+    ViewData["Title"] = "Users";
+}
+
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor Accessor
+
+@{
+    var RolePermissions = Accessor.HttpContext.Session.GetString("menus");
+
+}
+<style>
+    /* password toggle start */
+    .password-section {
+        position: relative;
+        display: inline-block;
+    }
+
+        .password-section .fa-eye {
+            position: absolute;
+            top: 76%;
+            right: 22px; /* Adjust this value to control the icon's position */
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .password-section .fa-eye-slash {
+            position: absolute;
+            top: 76%;
+            right: 22px; /* Adjust this value to control the icon's position */
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+    /* password toggle end */
+</style>
+
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex flex-wrap align-items-center">
+
+               
+                    <div class="col-md-2 pr-0">
+                        <div class="form-group form-group-default">
+                            <label>
+                                Organization
+
+                            </label>
+                            @Html.DropDownList("Organization", ViewBag.OrganizationId as SelectList, new { @id = "Organization", @name="Organization", @class="form-control" })
+
+                        </div>
+                    </div>
+                
+               
+                    <div class="col-md-2 pr-0">
+                        <div class="form-group form-group-default">
+                            <label>
+                                Franchise
+
+                            </label>
+                            @Html.DropDownList("OrganizationDetail", ViewBag.OrganizationDetailId as SelectList, "Please Select Franchise", new { @id = "OrganizationDetail", @name="OrganizationDetail", @class="form-control" })
+
+                        </div>
+                    </div>
+               
+                    <div class="col-md-2 pr-0">
+                        <div class="form-group form-group-default">
+                            <label>
+                                Dealer
+
+                            </label>
+                            @Html.DropDownList("Dealer", ViewBag.DealerId as SelectList, "Please Select Dealer", new { @id = "Dealer", @name="Dealer", @class="form-control" })
+
+                        </div>
+                    </div>
+               
+                    <div class="col-md-2 pr-0">
+                        <div class="form-group form-group-default">
+                            <label>
+                                SubDealer
+
+                            </label>
+                            @Html.DropDownList("SubDealer", ViewBag.SubDealerId as SelectList, "Please Select SubDealer", new { @id = "SubDealer", @name="SubDealer", @class="form-control" })
+
+                        </div>
+                   </div>
+                
+                
+                @* <div class="col-md-4 pr-4">
+                <label>Start Date</label>
+                <div class="input-group">
+                <input type="text" class="form-control datepicker" id="StartDate" name="StartDate" required>
+                <div class="input-group-append">
+                <span class="input-group-text">
+                <i class="fa fa-calendar-check"></i>
+                </span>
+                </div>
+                </div>
+                </div>
+
+                <div class="col-md-4 pr-4">
+                <label>End Date</label>
+                <div class="input-group">
+                <input type="text" class="form-control datepicker" id="EndDate" name="EndDate" required>
+                <div class="input-group-append">
+                <span class="input-group-text">
+                <i class="fa fa-calendar-check"></i>
+                </span>
+                </div>
+                </div>
+                </div> *@
+
+
+            </div>
+            <div class="btn-group btn-group-lg d-flex flex-column flex-md-row float-right" role="group">
+                <button class="btn btn-dark mb-2 mb-md-0" id="btnSearch">
+                    <i class="fa fa-search"></i>
+                    Search
+                </button>
+                @if (RolePermissions.Contains("/User/Add"))
+                {
+                    <button class="btn btn-primary ml-auto" id="add">
+                        <i class="fa fa-plus"></i>
+                        Add
+                    </button>
+                }
+
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Modal -->
+            <div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header border-0">
+                            <h5 class="modal-title">
+                                <span class="fw-mediumbold">
+                                    New
+                                </span>
+                                <span class="fw-light">
+                                    User
+                                </span>
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="form" data-parsley-validate="parsley">
+                                <div class="modal-body">
+                                    <input type="hidden" id="ID" name="ID" />
+                                    <div class="row">
+                                        <div class="col-md-6 pr-0">
+                                            <div class="form-group form-group-default">
+                                                <label>
+                                                    First Name
+
+                                                </label>
+                                                <input id="FirstName" name="FirstName" type="text" class="form-control" placeholder="First Name" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 pr-0">
+                                            <div class="form-group form-group-default">
+                                                <label>
+                                                    Middle Name
+
+                                                </label>
+                                                <input id="MiddleName" name="MiddleName" type="text" class="form-control" placeholder="Middle Name" >
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 pr-0">
+                                            <div class="form-group form-group-default">
+                                                <label>
+                                                    Last Name
+
+                                                </label>
+                                                <input id="LastName" name="LastName" type="text" class="form-control" placeholder="Last Name" >
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 pr-0">
+                                            <div class="form-group form-group-default">
+                                                <label>
+                                                    Username
+
+                                                </label>
+                                                <input id="Username" name="Username" type="text" class="form-control" placeholder="Username" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 pr-0">
+                                            <div class="form-group form-group-default password-section">
+                                                <label>
+                                                    Password
+
+                                                </label>
+                                                <input id="Password" name="Password" type="password" class="form-control" required>
+                                                <span class="fa fa-eye " id="togglePassword"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 pr-0">
+                                            <div class="form-group form-group-default">
+                                                <label>
+                                                    Contact No
+
+                                                </label>
+                                                <input id="ContactNo" name="ContactNo" type="text" class="form-control" placeholder="92312-12344556" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 pr-0">
+                                            <div class="form-group form-group-default">
+                                                <label>
+                                                    Email
+
+                                                </label>
+                                                <input id="Email" name="Email" type="text" class="form-control" placeholder="abc@airtouch.com" required>
+                                            </div>
+                                        </div>
+                                      @*   <div class="col-md-6 pr-0">
+                                            <div class="form-group form-group-default">
+                                                <label>
+                                                    Address
+
+                                                </label>
+                                                <input id="Address" name="Address" type="text" class="form-control" placeholder="Address" required>
+                                            </div>
+                                        </div> *@
+
+                                        <div class="col-md-6 pr-0">
+                                            <div class="form-group form-group-default">
+                                                <label>
+                                                    Franchise
+                                                </label>
+                                                @Html.DropDownList("OrganizationDetailId", ViewBag.OrganizationDetailId as SelectList,"Please Select Franchise", new { @id = "OrganizationDetailId", @name="OrganizationDetailId", @class="form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 pr-0">
+                                            <div class="form-group form-group-default">
+                                                <label>
+                                                    Dealer
+
+                                                </label>
+                                               @* @Html.DropDownList("AccountId", (IEnumerable<SelectListItem>)ViewBag.Accounts, null, new { @class ="form-control" })*@
+                                                @Html.DropDownList("DealerId", ViewBag.DealerId as SelectList, "Please Select Dealer", new { @id = "DealerId", @name="DealerId", @class="form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 pr-0">
+                                            <div class="form-group form-group-default">
+                                                <label>
+                                                    SubDealer
+                                                </label>
+                                                @Html.DropDownList("SubDealerId", ViewBag.SubDealerId as SelectList,"Please Select SubDealer", new { @id = "SubDealerId", @name="SubDealerId", @class="form-control" })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 pr-0">
+                                            <div class="form-group form-group-default">
+                                                <label>
+                                                    Role
+                                                </label>
+                                                @Html.DropDownList("RoleId", ViewBag.RoleId as SelectList,"Please Select Role", new { @id = "RoleId", @name="RoleId", @class="form-control" })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group form-show-validation row">
+                                                <div class="col-lg-3"></div>
+                                                <div class="row image-gallery">
+                                                    <a href="" class="col-6 col-md-3 mb-4 magnifier" id="magnifier">
+                                                        <img id="profileImage" src="" class="img-fluid avatar-img rounded">
+                                                    </a>
+                                                    @*  </div>
+
+                                                    <div class="col-lg-4 col-md-9 col-sm-8">*@
+                                                    <div class="input-file input-file-image">
+                                                        <input type="file" class="form-control form-control-file" id="ProfilePicture" name="ProfilePicture" accept="image/*" onchange="loadFile(event)" required>
+                                                        <label for="ProfilePicture" class="btn btn-primary btn-round btn-lg">Upload Picture</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-6" id="isactivediv" hidden>
+                                            <div class="form-group form-group-default">
+                                                <label>Active</label>
+                                                <input type="checkbox" id="IsActive" name="IsActive" data-toggle="toggle" data-onstyle="primary" data-style="btn-round" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer border-0">
+
+                                    <button type="submit" id="btnAdd" class="btn btn-primary">Add</button>
+                                    <button type="submit" class="btn btn-secondary btn-lg sender-button" id="btnUpdate" style="display:none">Update</button>
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table id="add-row" class="display tblmanage table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>First Name</th>
+                            <th>Middle Name</th>
+                            <th>Last Name</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>ContactNo</th>
+                            <th>Email</th>
+                            <th>Franchise</th>
+                            <th>Dealer</th>
+                            <th>SubDealer</th>
+                            <th>Status</th>
+                            <th style="width: 10%">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@section Scripts{
+
+    <script src="~/projectscripts/UserScript.js"></script>
+    <script>
+        $(document).ready(function () {
+            UserScript.RenderDataTable($('#role').val());
+            //  Toggle  Password Start
+            $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
+            $("#togglePassword").click(function () {
+                const passwordInput = $("#Password");
+                const type = passwordInput.attr("type");
+
+                if (type === "password") {
+                    passwordInput.attr("type", "text");
+                    $("#togglePassword").removeClass("fa fa-eye-slash").addClass("fa fa-eye");
+                } else {
+                    passwordInput.attr("type", "password");
+                    $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
+                }
+            });
+            //  Toggle  Password End
+        });
+        $('#btnSearch').click(function () {
+            UserScript.RenderDataTable($('#role').val());
+        })
+
+
+        $('#IsActive').change(function () {
+            if ($('#IsActive').is(":checked")) {
+                $('#IsActive').val(true);
+            }
+            else {
+                $('#IsActive').val(false);
+            }
+
+        });
+
+        var loadFile = function (event) {
+            var PostPicture = document.getElementById('profileImage');
+            PostPicture.src = URL.createObjectURL(event.target.files[0]);
+            PostPicture.onload = function () {
+                URL.revokeObjectURL(PostPicture.src) // free memory
+            }
+        };
+
+        $(document).on("submit", "form", function (event) {
+            event.preventDefault();
+
+            var formData = new FormData(this);
+            if ($('#ID').val() > 0 ) {
+
+                UserScript.Save(formData, '/User/Update');
+            }
+            
+
+            else {
+                UserScript.Save(formData, '/User/Add');
+            }
+        });
+
+        $(document).on('click', '.edit', function () {
+            var data = $('.tblmanage').DataTable().row($(this).closest('tr')).data();
+
+            $('.modal-title').text("Update User");
+            $('#isactivediv').removeAttr('hidden');
+            UserScript.FillModal(data);
+
+        });
+
+        $('#add').click(function () {
+
+            $('#addRowModal').modal("show");
+            $('.modal-title').text("New User");
+            $("#form").trigger('reset');
+            $('#btnUpdate').css('display', 'none');
+            $('#btnAdd').css('display', 'block');
+            $('#isactivediv').css('display', 'none');
+            $('#isactivediv').prop('hidden', true);
+            $('#ID').val(0);
+
+        });
+
+        $(document).on('click', '.delete', function () {
+            var data = $('.tblmanage').DataTable().row($(this).closest('tr')).data();
+            $('#isactivediv').css('display', 'block');
+            $('#isactivediv').removeAttr('hidden');
+            UserScript.Delete(data.id);
+        });
+
+        
+    </script>
+}

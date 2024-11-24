@@ -1,0 +1,93 @@
+﻿@model BCMT_Associates.Models.Publication
+
+<form id="editPublicationForm">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <div class="mb-3">
+        <label>Title</label>
+        <input type="text" class="form-control" name="Title" value="@Model.Title" required />
+    </div>
+    <div class="mb-3">
+        <label>Journal Name</label>
+        <input type="text" class="form-control" name="JournalName" value="@Model.JournalName" required />
+    </div>
+    <div class="mb-3">
+        <label>Date Published</label>
+        <input type="date" class="form-control" name="DatePublished" value="@Model.DatePublished.ToString("yyy-MM-dd")" required />
+    </div>
+    <div class="mb-3">
+        <label>ISSN</label>
+        <input type="text" class="form-control" name="iSSN" value="@Model.ISSN" required />
+    </div>
+    <div class="form-check mb-3">
+        <input type="checkbox" class="form-check-input" name="IsVisibleOnMainPage" id="IsVisibleOnMainPage" @(Model.IsVisibleOnMainPage ? "checked" : "") />
+        <label class="form-check-label" for="IsVisibleOnMainPage">Visible on Main Page</label>
+    </div>
+    <button type="submit" class="btn btn-success">Save Changes</button>
+</form>
+
+<script>
+    $(document).off("submit", "#editPublicationForm").on("submit", "#editPublicationForm", function (e) {
+        e.preventDefault();
+
+        // Manually handle checkbox value before submitting
+        var isChecked = $('#IsVisibleOnMainPage').prop('checked'); // true or false //.prop('checked'): The prop() function is used to get the state of the checkbox. It returns true if the checkbox is checked and false if it is unchecked.
+        // If checked, set 'IsVisibleOnMainPage' to true, otherwise false
+        $("input[name='IsVisibleOnMainPage']").val(isChecked ? "true" : "false");
+
+        // var formData = $(this).serialize();
+
+        // Create FormData object with the updated checkbox value
+        var formData = new FormData(this);
+
+        var PublicationId = $('input[name="Id"]').val(); // Get the course ID from the hidden input
+
+
+        $.ajax({
+            url: '/publications/Edit/' + PublicationId,
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.success) {
+                    $('#EditModal').modal('hide');
+                    
+                    //Dynamic Changing of Values
+                    $(`#publication-${PublicationId} .card-title`).text($("input[name='Title']").val());
+                    $(`#publication-${PublicationId} .card-text.Name`).text($("input[name='JournalName']").val());
+
+                    // Get the date in yyyy-MM-dd format from the form input
+                    //making format of date same to the main page fromate
+                    let dateValue = $("input[name='DatePublished']").val();
+
+                    // Check if dateValue exists to avoid errors
+                    if (dateValue) {
+                        // Split and reformat the date to MM-dd-yyyy
+                        let [year, month, day] = dateValue.split("-");
+                        let formattedDate = `${month}/${day}/${year}`;
+
+                        // Update the display with the formatted date
+                        $(`#publication-${PublicationId} .card-text.Date`).text(formattedDate);
+                    }
+
+                    $(`#publication-${PublicationId} .card-text.ISSN`).text($("input[name='iSSN']").val());
+                    // productCard.find('.card-text.description').text(response.product.description);
+
+
+                    // var updatedCard = $(`#publication-${response.publication.id}`);
+                    // updatedCard.find(".card-title").text(response.publication.title);
+                    // updatedCard.find(".card-text").html(`
+                    //         Journal Name: ${response.publication.journalName}<br />
+                    //         Date Published: ${new Date(response.publication.datePublished).toLocaleDateString()}<br />
+                    //         ISSN: ${response.publication.issn}
+                    //     `);
+                } else {
+                    alert("Error editing publication.");
+                }
+            },
+            error: function () {
+                alert("An error occurred.");
+            }
+        });
+    });
+</script>

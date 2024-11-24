@@ -1,0 +1,19 @@
+﻿@model BCMT_Associates.Models.Contact
+
+@using (Html.BeginForm("Edit", "AdminContact", FormMethod.Post, new { id = "contactForm" }))
+{
+    <div class="form-group">
+        <label for="Location">Location</label>
+        <input type="text" class="form-control" id="Location" name="Location" value="@Model.Location" required />
+    </div>
+    <div class="form-group">
+        <label for="Email">Email</label>
+        <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" required />
+    </div>
+    <div class="form-group">
+        <label for="ContactNumber">Contact Number</label>
+        <input type="text" class="form-control" id="ContactNumber" name="ContactNumber" value="@Model.ContactNumber" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+}
+

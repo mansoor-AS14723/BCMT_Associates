@@ -1,0 +1,73 @@
+﻿@model BCMT_Associates.Models.Course
+
+<style>
+    /* Falling animation for delete effect */
+    .delete-animation {
+        transition: all 0.7s ease-in-out;
+        opacity: 0;
+        transform: translateY(100px) rotate(15deg); /* Move down and add slight rotation */
+        pointer-events: none; /* Prevent interaction during animation */
+    }
+</style>
+
+<h3 class="text-danger">Are you sure you want to delete the course <strong>@Model.Name</strong>?</h3>
+<p><strong>Description:</strong> @Model.Description</p>
+<p><strong>Image:</strong></p>
+<img src="@(Model.ImageData != null ? $"data:image/png;base64,{Convert.ToBase64String(Model.ImageData)}" : "/path/to/default-image.jpg")" class="img-fluid" alt="@Model.Name" />
+
+<form id="deleteCourseForm" class="mt-3">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+</form>
+
+<script>
+    //Off will restrict double submissioine of form once
+    $(document).off('submit', '#deleteCourseForm').on('submit', '#deleteCourseForm', function (e) {
+        e.preventDefault();
+
+        var courseId = $('input[name="id"]').val();// here we get Id from Input
+        // Debugging line to log the course ID to the console
+        console.log("Course ID to delete:", courseId);
+        
+
+        // var courseId = $('#DeleteModal').data('course-id');   // Also Can Get Id from Deletemodel data attribute ,product-id
+
+
+        $.ajax({
+            url: '/Courses/Delete/' + courseId,
+            type: 'POST',
+            success: function (response) {
+                if (response.success) {
+                    $('#DeleteModal').modal('hide');
+
+                    var $deletedCard = $(`#course-${courseId}`) // The Card which we want to delete ,Getting Here,
+
+                    // Add delete-animation class to trigger CSS transition
+                    $deletedCard.addClass('delete-animation');
+
+                    // Wait for the animation to complete before removing the element
+                    setTimeout(function () {
+                        $deletedCard.remove();
+                    }, 700); // Match the timeout with the CSS animation duration
+
+                     
+                    // // Smoothly fade out and remove the deleted card,fadeout for animation
+                    // $deletedCard.fadeOut(300, function () {
+                    //     $deletedCard.remove();
+
+                    // });
+                    // alert(response.message); // Show the error message from the server
+
+                } else {
+                    alert('Error deleting course: ' + response.message); // Show the error message from the server
+                }
+            },
+            error: function () {
+                alert('An error occurred while deleting the course.');
+            }
+        });
+    });
+
+
+</script>

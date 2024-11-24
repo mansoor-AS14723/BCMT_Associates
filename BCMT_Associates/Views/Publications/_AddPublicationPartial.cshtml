@@ -1,0 +1,174 @@
+﻿@model BCMT_Associates.Models.Publication
+
+<form id="addPublicationForm">
+    <div class="mb-3">
+        <label>Title</label>
+        <input type="text" class="form-control" name="Title" required />
+    </div>
+    <div class="mb-3">
+        <label>Journal Name</label>
+        <input type="text" class="form-control" name="JournalName" required />
+    </div>
+    <div class="mb-3">
+        <label>Date Published</label>
+        <input type="date" class="form-control" name="DatePublished" required />
+    </div>
+    <div class="mb-3">
+        <label>ISSN</label>
+        <input type="text" class="form-control" name="ISSN" required />
+    </div>
+
+    <div class="form-check mb-3">
+        <input type="hidden" name="IsVisibleOnMainPage" value="false" />
+        <input type="checkbox" class="form-check-input" name="IsVisibleOnMainPage" id="IsVisibleOnMainPage" value="true" />
+        <label class="form-check-label" for="IsVisibleOnMainPage">Visible on Main Page</label>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+</form>
+
+<script>
+    $(document).off("submit", "#addPublicationForm").on("submit", "#addPublicationForm", function (e) {
+        e.preventDefault();
+
+        // Check if checkbox is checked, set IsVisibleOnMainPage accordingly
+        var isChecked = $('#IsVisibleOnMainPage').prop('checked');
+        if (isChecked) {
+            $("input[name='IsVisibleOnMainPage']").val("true");
+        } else {
+            $("input[name='IsVisibleOnMainPage']").val("false");
+        }
+
+        var formData = new FormData(this);
+
+        // Log formData to see what’s being sent only for consol to see what type of data is sending from input field.
+        for (var pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+
+        $.ajax({
+            url: "/Publications/Add",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.success) {
+                    $('#CreateModal').modal('hide');
+                    var newCard = `
+                            <div class="col-md-4 mb-4" id="publication-${response.publication.id}">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${response.publication.title}</h5>
+                                        <p class="card-text">${response.publication.journalName}</p>
+                                        <p class="card-text">${response.publication.datePublished}</p>
+                                        <p class="card-text">${response.publication.issn}</p>
+                                        <button class="btn btn-warning text-white" data-bs-toggle="modal" data-bs-target="#EditModal" data-id="${response.publication.id}">Edit</button>
+                                        <button class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#DeleteModal" data-id="${response.publication.id}">Delete</button>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                    $('#publicationsList').append(newCard);
+                } else {
+                    alert("Error adding publication.");
+                }
+            },
+            error: function () {
+                alert("An error occurred.");
+            }
+        });
+    });
+</script>
+
+@* @model CourseManagement.Models.Publication
+
+<form id="addPublicationForm">
+    <div class="mb-3">
+        <label>Title</label>
+        <input type="text" class="form-control" name="Title" required />
+    </div>
+    <div class="mb-3">
+        <label>Journal Name</label>
+        <input type="text" class="form-control" name="JournalName" required />
+    </div>
+    <div class="mb-3">
+        <label>Date Published</label>
+        <input type="date" class="form-control" name="DatePublished" required />
+    </div>
+    <div class="mb-3">
+        <label>ISSN</label>
+        <input type="text" class="form-control" name="ISSN" required />
+    </div>
+
+    <div class="form-check mb-3">
+        <!-- Hidden input to always pass a value for IsVisibleOnMainPage -->
+        <input type="hidden" name="IsVisibleOnMainPage" value="false" />
+        <input type="checkbox" class="form-check-input" name="IsVisibleOnMainPage" id="IsVisibleOnMainPage" value="true" />
+        <label class="form-check-label" for="IsVisibleOnMainPage">Visible on Main Page</label>
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+</form>
+
+<script>
+    $(document).off("submit", "#addPublicationForm").on("submit", "#addPublicationForm", function (e) {
+        e.preventDefault();
+
+        // Check the state of the checkbox and manually set the value for IsVisibleOnMainPage
+        var isChecked = $('#IsVisibleOnMainPage').prop('checked');
+        // If the checkbox is not checked, set the value to "false"
+        if (!isChecked) {
+            $("input[name='IsVisibleOnMainPage']").val("false");
+        } else {
+            $("input[name='IsVisibleOnMainPage']").val("true");
+        }
+
+        var formData = new FormData(this);
+        // Log formData to see what's being sent
+        for (var pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+
+        $.ajax({
+            url: "/Publications/Add",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.success) {
+                    $('#CreateModal').modal('hide');
+                    var newCard = `
+                                        <div class="col-md-4 mb-4" id="publication-${response.publication.id}">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">${response.publication.title}</h5>
+                                                    <p class="card-text">
+                                                    </p>
+                                                    
+                                                            <p class="card-text Name">
+                                                              ${response.publication.journalName}  </p>
+                                                            
+                                                            <p class="card-text Date">
+                                                                    ${response.publication.datePublished.ToShortDateString()  </p>
+
+
+                                                              <p class"card-text ISSN">   ${response.publication.issn}</p>
+                                            
+                                                <button class="btn btn-warning text-white" data-bs-toggle="modal" data-bs-target="#EditModal" data-id="${response.publication.id}">Edit</button>
+                                        <button class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#DeleteModal" data-id="${response.publication.id}">Delete</button>
+                                    </div>
+                                </div>
+                            </div>`;
+                    $('#publicationsList').append(newCard);
+                } else {
+                    alert("Error adding publication.");
+                    }
+                },
+                error: function () {
+                            alert("An error occurred.");
+                        }
+                    });
+                });
+</script>
+ *@

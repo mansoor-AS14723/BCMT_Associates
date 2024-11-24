@@ -1,0 +1,119 @@
+﻿@model BCMT_Associates.Models.Contact
+
+@{
+    ViewData["Title"] = "Contact Information";
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+}
+
+<h2 class="text-center my-4">Contact Information</h2>
+
+<div class="container">
+    <div class="row">
+        <!-- Left Side: Contact Information -->
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4><i class="fas fa-info-circle"></i> Contact Details</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Location Section -->
+                    <div class="mb-3">
+                        <h5><i class="fas fa-map-marker-alt"></i> Location:</h5>
+                        <p id="location" class="lead">@Model.Location</p>
+                    </div>
+
+                    <!-- Email Section -->
+                    <div class="mb-3">
+                        <h5><i class="fas fa-envelope"></i> Email:</h5>
+                        <p id="email" class="lead">@Model.Email</p>
+                    </div>
+
+                    <!-- Contact Number Section -->
+                    <div class="mb-3">
+                        <h5><i class="fas fa-phone"></i> Contact Number:</h5>
+                        <p id="contactNumber" class="lead">@Model.ContactNumber</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Contact Form -->
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white text-center">
+                    <h4><i class="fas fa-paper-plane"></i> Contact Us</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="@Url.Action("SendMessage", "UserContact")">
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Your Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="name" name="Name" placeholder="Enter your name" required />
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Your Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" name="Email" placeholder="Enter your email" required />
+                            </div>
+                        </div>
+
+                        <!-- Subject -->
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                                <input type="text" class="form-control" id="subject" name="Subject" placeholder="Enter the subject" required />
+                            </div>
+                        </div>
+
+                        <!-- Message -->
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Your Message</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-comment"></i></span>
+                                <textarea class="form-control" id="message" name="Message" rows="4" placeholder="Enter your message" required></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-success w-100"><i class="fas fa-paper-plane"></i> Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>  <!-- FontAwesome Icons -->
+    <script>
+        $(document).ready(function () {
+            function updateContactInfo() {
+                $.ajax({
+                    url: '@Url.Action("GetContactInfo", "AdminContact")',  // Fetch the updated contact info
+                    type: 'GET',
+                    success: function (data) {
+                        $('#location').text(data.Location);
+                        $('#email').text(data.Email);
+                        $('#contactNumber').text(data.ContactNumber);
+                    },
+                    error: function () {
+                        alert('Error fetching contact info.');
+                    }
+                });
+            }
+
+            // Update contact info when the page loads
+            updateContactInfo();
+        });
+    </script>
+}
